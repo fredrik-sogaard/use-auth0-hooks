@@ -58,5 +58,4 @@ typings/
 .env
 
 # Distribution directories
-dist/
 .next
