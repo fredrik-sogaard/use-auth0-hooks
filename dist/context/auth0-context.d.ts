@@ -1,4 +1,4 @@
-import * as Auth0ClientTypes from '@auth0/auth0-spa-js/dist/typings/Auth0Client';
+import * as Auth0ClientTypes from "@auth0/auth0-spa-js/dist/typings/Auth0Client";
 export declare type Auth0Client = Auth0ClientTypes.default;
 export interface AccessTokenRequestOptions {
     /**
@@ -28,14 +28,14 @@ export interface LoginOptions {
      * - `'touch'`: displays the UI in a way that leverages a touch interface
      * - `'wap'`: displays the UI with a "feature phone" type interface
      */
-    display?: 'page' | 'popup' | 'touch' | 'wap';
+    display?: "page" | "popup" | "touch" | "wap";
     /**
      * - `'none'`: do not prompt user for login or consent on reauthentication
      * - `'login'`: prompt user for reauthentication
      * - `'consent'`: prompt user for consent before processing request
      * - `'select_account'`: prompt user to select an account
      */
-    prompt?: 'none' | 'login' | 'consent' | 'select_account';
+    prompt?: "none" | "login" | "consent" | "select_account";
     /**
      * Maximum allowable elasped time (in seconds) since authentication.
      * If the last time the user authenticated is greater than this value,
@@ -113,9 +113,17 @@ export interface IAuth0Context {
      */
     login: (options: LoginOptions) => Promise<void>;
     /**
+     * Sign in with pop up window.
+     */
+    loginPopup: (options: LogoutOptions) => Promise<void>;
+    /**
      * Sign out.
      */
     logout: (options: LogoutOptions) => void;
+    /**
+     * Pop up window open status
+     */
+    popupOpen: boolean;
     /**
      * Handlers which allow the developer to plug in their own logic.
      */

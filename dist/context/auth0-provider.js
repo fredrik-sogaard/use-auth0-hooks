@@ -9,6 +9,7 @@ const auth0_1 = require("../utils/auth0");
 function Auth0Provider(_a) {
     var { children, clientId, redirectUri, onRedirecting, onRedirectCallback, onLoginError, onAccessTokenError } = _a, props = tslib_1.__rest(_a, ["children", "clientId", "redirectUri", "onRedirecting", "onRedirectCallback", "onLoginError", "onAccessTokenError"]);
     const [client, setClient] = react_1.useState();
+    const [popupOpen, setPopupOpen] = react_1.useState(false);
     react_1.useEffect(() => {
         const initAuth0 = () => tslib_1.__awaiter(this, void 0, void 0, function* () {
             try {
@@ -22,17 +23,33 @@ function Auth0Provider(_a) {
         });
         initAuth0();
     }, []);
+    const loginPopup = (opt) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+        setPopupOpen(true);
+        try {
+            yield auth0_1.ensureClient(client).loginWithPopup(opt);
+        }
+        catch (error) {
+            if (onLoginError) {
+                onLoginError(error);
+            }
+        }
+        finally {
+            setPopupOpen(false);
+        }
+    });
     const value = {
         client,
         login: (opt) => auth0_1.ensureClient(client).loginWithRedirect(opt),
+        loginPopup,
+        popupOpen,
         logout: (opt) => auth0_1.ensureClient(client).logout(opt),
         getAccessToken: (opt) => auth0_1.ensureClient(client).getTokenSilently(opt),
         handlers: {
             onRedirecting,
             onRedirectCallback,
             onLoginError,
-            onAccessTokenError
-        }
+            onAccessTokenError,
+        },
     };
     return (react_1.default.createElement(auth0_context_1.default.Provider, { value: value },
         react_1.default.createElement(user_provider_1.default, null, children)));

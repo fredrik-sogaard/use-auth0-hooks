@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from "react";
 
-import Auth0Context from './auth0-context';
-import { ensureClient } from '../utils/auth0';
-import UserContext, { IUserContext } from './user-context';
+import Auth0Context from "./auth0-context";
+import { ensureClient } from "../utils/auth0";
+import UserContext, { IUserContext } from "./user-context";
 
 export interface UserProviderOptions {
   children: JSX.Element;
@@ -11,7 +11,10 @@ export interface UserProviderOptions {
 /**
  * Logic which will take care of cleaning up the state and optionally calling the redirect handler.
  */
-function redirectAfterLogin(appState: any, onRedirectCallback?: (appState: any) => void): void {
+function redirectAfterLogin(
+  appState: any,
+  onRedirectCallback?: (appState: any) => void
+): void {
   if (!window) {
     return;
   }
@@ -34,27 +37,34 @@ function initialState(): IUserContext {
     user: null,
     error: null,
     isAuthenticated: false,
-    isLoading: false
+    isLoading: false,
   };
 }
 
-export default function UserProvider({ children }: UserProviderOptions): JSX.Element {
-  const { client, handlers } = useContext(Auth0Context);
+export default function UserProvider({
+  children,
+}: UserProviderOptions): JSX.Element {
+  const { client, handlers, popupOpen } = useContext(Auth0Context);
   const [state, setState] = useState<IUserContext>(initialState);
 
   useEffect(() => {
     const executeCallback = async (): Promise<void> => {
       setState({
         ...initialState(),
-        isLoading: true
+        isLoading: true,
       });
 
       if (client) {
         try {
           // If the user was redirect from Auth0, we need to handle the exchange or throw an error.
-          if (window.location.search.includes('state=') || (window.location.search.includes('error=')
-            || window.location.search.includes('code='))) {
-            const { appState } = await ensureClient(client).handleRedirectCallback();
+          if (
+            window.location.search.includes("state=") ||
+            (window.location.search.includes("error=") ||
+              window.location.search.includes("code="))
+          ) {
+            const { appState } = await ensureClient(
+              client
+            ).handleRedirectCallback();
             redirectAfterLogin(appState, handlers.onRedirectCallback);
           }
 
@@ -62,12 +72,12 @@ export default function UserProvider({ children }: UserProviderOptions): JSX.Ele
           setState({
             ...initialState(),
             user,
-            isAuthenticated: !!user
+            isAuthenticated: !!user,
           });
         } catch (err) {
           setState({
             ...initialState(),
-            error: err
+            error: err,
           });
 
           // Call a custom error handler if available.
@@ -78,11 +88,7 @@ export default function UserProvider({ children }: UserProviderOptions): JSX.Ele
       }
     };
     executeCallback();
-  }, [client]);
+  }, [client, popupOpen]);
 
-  return (
-    <UserContext.Provider value={state}>
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={state}>{children}</UserContext.Provider>;
 }

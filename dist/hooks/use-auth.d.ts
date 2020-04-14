@@ -1,5 +1,5 @@
-import { ITokenResponse } from '../context/access-token-context';
-import { LoginOptions, AccessTokenRequestOptions } from '../context/auth0-context';
+import { ITokenResponse } from "../context/access-token-context";
+import { LoginOptions, AccessTokenRequestOptions } from "../context/auth0-context";
 export interface UseAuthResult {
     /**
      * The current user.
@@ -29,6 +29,10 @@ export interface UseAuthResult {
      * Sign in.
      */
     login: (options: LoginOptions) => Promise<void>;
+    /**
+     * Sign in with pop up window.
+     */
+    loginPopup: (options: LogoutOptions) => Promise<void>;
     /**
      * Sign out.
      */
