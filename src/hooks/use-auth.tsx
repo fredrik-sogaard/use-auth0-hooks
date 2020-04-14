@@ -1,9 +1,12 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from "react";
 
-import UserContext from '../context/user-context';
-import { ITokenContext, ITokenResponse } from '../context/access-token-context';
-import { getTokenFromCache, ensureClient } from '../utils/auth0';
-import Auth0Context, { LoginOptions, AccessTokenRequestOptions } from '../context/auth0-context';
+import UserContext from "../context/user-context";
+import { ITokenContext, ITokenResponse } from "../context/access-token-context";
+import { getTokenFromCache, ensureClient } from "../utils/auth0";
+import Auth0Context, {
+  LoginOptions,
+  AccessTokenRequestOptions,
+} from "../context/auth0-context";
 
 export interface UseAuthResult {
   /**
@@ -42,6 +45,11 @@ export interface UseAuthResult {
   login: (options: LoginOptions) => Promise<void>;
 
   /**
+   * Sign in with pop up window.
+   */
+  loginPopup: (options: LogoutOptions) => Promise<void>;
+
+  /**
    * Sign out.
    */
   logout: (options: LogoutOptions) => void;
@@ -51,23 +59,17 @@ function initialState(): ITokenContext {
   return {
     token: null,
     error: null,
-    isLoading: false
+    isLoading: false,
   };
 }
 
-export default function useAuth(tokenRequest?: AccessTokenRequestOptions): UseAuthResult {
-  const {
-    isAuthenticated,
-    isLoading,
-    error,
-    user
-  } = useContext(UserContext);
-  const {
-    client,
-    login,
-    logout,
-    handlers
-  } = useContext(Auth0Context);
+export default function useAuth(
+  tokenRequest?: AccessTokenRequestOptions
+): UseAuthResult {
+  const { isAuthenticated, isLoading, error, user } = useContext(UserContext);
+  const { client, login, logout, handlers, loginPopup } = useContext(
+    Auth0Context
+  );
 
   // If no token is needed we can just stop here.
   if (!tokenRequest) {
@@ -77,16 +79,20 @@ export default function useAuth(tokenRequest?: AccessTokenRequestOptions): UseAu
       isAuthenticated,
       isLoading,
       login,
-      logout
+      logout,
+      loginPopup,
     };
   }
 
   // The following will holde the additional state for this hook.
   // We'll try to fetch the token from the cache first if available.
-  const [state, setState] = useState<ITokenContext>((): ITokenContext => ({
+  const [state, setState] = useState<ITokenContext>(
+    (): ITokenContext => ({
       ...initialState(),
-      token: client && getTokenFromCache(client, tokenRequest.audience, tokenRequest.scope),
-      isLoading: !!tokenRequest
+      token:
+        client &&
+        getTokenFromCache(client, tokenRequest.audience, tokenRequest.scope),
+      isLoading: !!tokenRequest,
     })
   );
 
@@ -102,11 +108,15 @@ export default function useAuth(tokenRequest?: AccessTokenRequestOptions): UseAu
     }
 
     // Try to fetch the token from the cache in a synchronous way.
-    const cachedToken = getTokenFromCache(client, tokenRequest.audience, tokenRequest.scope);
+    const cachedToken = getTokenFromCache(
+      client,
+      tokenRequest.audience,
+      tokenRequest.scope
+    );
     if (cachedToken) {
       setState({
         ...initialState(),
-        token: cachedToken
+        token: cachedToken,
       });
       return;
     }
@@ -116,7 +126,7 @@ export default function useAuth(tokenRequest?: AccessTokenRequestOptions): UseAu
       try {
         setState({
           ...initialState(),
-          isLoading: true
+          isLoading: true,
         });
 
         // We will fetch the token in a silent way.
@@ -124,8 +134,8 @@ export default function useAuth(tokenRequest?: AccessTokenRequestOptions): UseAu
           ...initialState(),
           token: await ensureClient(client).getTokenSilently({
             audience: tokenRequest.audience,
-            scope: tokenRequest.scope
-          })
+            scope: tokenRequest.scope,
+          }),
         });
       } catch (e) {
         // An error occured.
@@ -135,7 +145,7 @@ export default function useAuth(tokenRequest?: AccessTokenRequestOptions): UseAu
 
         setState({
           ...initialState(),
-          error: e
+          error: e,
         });
       }
     };
@@ -150,6 +160,7 @@ export default function useAuth(tokenRequest?: AccessTokenRequestOptions): UseAu
     token: state.token,
     accessToken: state.token && state.token.accessToken,
     login,
-    logout
+    loginPopup,
+    logout,
   };
 }

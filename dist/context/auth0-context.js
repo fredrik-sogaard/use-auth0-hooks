@@ -4,11 +4,15 @@ const react_1 = require("react");
 exports.default = react_1.createContext({
     client: undefined,
     login: () => {
-        throw new Error('Auth0Client was not initialized');
+        throw new Error("Auth0Client was not initialized");
+    },
+    loginPopup: () => {
+        throw new Error("Auth0Client was not initialized");
     },
     logout: () => {
-        throw new Error('Auth0Client was not initialized');
+        throw new Error("Auth0Client was not initialized");
     },
-    handlers: {}
+    popupOpen: false,
+    handlers: {},
 });
 //# sourceMappingURL=auth0-context.js.map

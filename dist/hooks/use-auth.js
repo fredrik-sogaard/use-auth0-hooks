@@ -9,12 +9,12 @@ function initialState() {
     return {
         token: null,
         error: null,
-        isLoading: false
+        isLoading: false,
     };
 }
 function useAuth(tokenRequest) {
     const { isAuthenticated, isLoading, error, user } = react_1.useContext(user_context_1.default);
-    const { client, login, logout, handlers } = react_1.useContext(auth0_context_1.default);
+    const { client, login, logout, handlers, loginPopup } = react_1.useContext(auth0_context_1.default);
     // If no token is needed we can just stop here.
     if (!tokenRequest) {
         return {
@@ -23,12 +23,14 @@ function useAuth(tokenRequest) {
             isAuthenticated,
             isLoading,
             login,
-            logout
+            logout,
+            loginPopup,
         };
     }
     // The following will holde the additional state for this hook.
     // We'll try to fetch the token from the cache first if available.
-    const [state, setState] = react_1.useState(() => (Object.assign(Object.assign({}, initialState()), { token: client && auth0_1.getTokenFromCache(client, tokenRequest.audience, tokenRequest.scope), isLoading: !!tokenRequest })));
+    const [state, setState] = react_1.useState(() => (Object.assign(Object.assign({}, initialState()), { token: client &&
+            auth0_1.getTokenFromCache(client, tokenRequest.audience, tokenRequest.scope), isLoading: !!tokenRequest })));
     react_1.useEffect(() => {
         // We are not ready to fetch a token yet.
         if (!client || isLoading || !isAuthenticated) {
@@ -51,7 +53,7 @@ function useAuth(tokenRequest) {
                 // We will fetch the token in a silent way.
                 setState(Object.assign(Object.assign({}, initialState()), { token: yield auth0_1.ensureClient(client).getTokenSilently({
                         audience: tokenRequest.audience,
-                        scope: tokenRequest.scope
+                        scope: tokenRequest.scope,
                     }) }));
             }
             catch (e) {
@@ -72,7 +74,8 @@ function useAuth(tokenRequest) {
         token: state.token,
         accessToken: state.token && state.token.accessToken,
         login,
-        logout
+        loginPopup,
+        logout,
     };
 }
 exports.default = useAuth;

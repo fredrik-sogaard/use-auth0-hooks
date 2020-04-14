@@ -24,11 +24,11 @@ function initialState() {
         user: null,
         error: null,
         isAuthenticated: false,
-        isLoading: false
+        isLoading: false,
     };
 }
-function UserProvider({ children }) {
-    const { client, handlers } = react_1.useContext(auth0_context_1.default);
+function UserProvider({ children, }) {
+    const { client, handlers, popupOpen } = react_1.useContext(auth0_context_1.default);
     const [state, setState] = react_1.useState(initialState);
     react_1.useEffect(() => {
         const executeCallback = () => tslib_1.__awaiter(this, void 0, void 0, function* () {
@@ -36,8 +36,9 @@ function UserProvider({ children }) {
             if (client) {
                 try {
                     // If the user was redirect from Auth0, we need to handle the exchange or throw an error.
-                    if (window.location.search.includes('state=') || (window.location.search.includes('error=')
-                        || window.location.search.includes('code='))) {
+                    if (window.location.search.includes("state=") ||
+                        (window.location.search.includes("error=") ||
+                            window.location.search.includes("code="))) {
                         const { appState } = yield auth0_1.ensureClient(client).handleRedirectCallback();
                         redirectAfterLogin(appState, handlers.onRedirectCallback);
                     }
@@ -54,8 +55,8 @@ function UserProvider({ children }) {
             }
         });
         executeCallback();
-    }, [client]);
-    return (react_1.default.createElement(user_context_1.default.Provider, { value: state }, children));
+    }, [client, popupOpen]);
+    return react_1.default.createElement(user_context_1.default.Provider, { value: state }, children);
 }
 exports.default = UserProvider;
 //# sourceMappingURL=user-provider.js.map

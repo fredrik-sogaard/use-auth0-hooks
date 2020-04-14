@@ -1,5 +1,5 @@
-import React from 'react';
-import { AccessTokenRequestOptions } from './auth0-context';
+import React from "react";
+import { AccessTokenRequestOptions } from "./auth0-context";
 export interface Auth0ProviderOptions {
     children: JSX.Element;
     /**

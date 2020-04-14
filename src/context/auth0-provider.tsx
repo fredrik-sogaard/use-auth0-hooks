@@ -1,14 +1,14 @@
-import createClient from '@auth0/auth0-spa-js';
-import React, { useEffect, useState } from 'react';
+import createClient from "@auth0/auth0-spa-js";
+import React, { useEffect, useState } from "react";
 
 import Auth0Context, {
   Auth0Client,
   LoginOptions,
   LogoutOptions,
-  AccessTokenRequestOptions
-} from './auth0-context';
-import UserProvider from './user-provider';
-import { ensureClient } from '../utils/auth0';
+  AccessTokenRequestOptions,
+} from "./auth0-context";
+import UserProvider from "./user-provider";
+import { ensureClient } from "../utils/auth0";
 
 export interface Auth0ProviderOptions {
   children: JSX.Element;
@@ -46,7 +46,10 @@ export interface Auth0ProviderOptions {
   /**
    * Called when we fail to retrieve an access token.
    */
-  onAccessTokenError?: (error: Error, options: AccessTokenRequestOptions) => void;
+  onAccessTokenError?: (
+    error: Error,
+    options: AccessTokenRequestOptions
+  ) => void;
 
   /**
    * Any other setting you want to send to the Auth0 SPA SDK.
@@ -65,14 +68,17 @@ export default function Auth0Provider({
   ...props
 }: Auth0ProviderOptions): JSX.Element {
   const [client, setClient] = useState<Auth0Client>();
+  const [popupOpen, setPopupOpen] = useState(false);
   useEffect(() => {
     const initAuth0 = async (): Promise<void> => {
       try {
-        setClient(await createClient({
-          client_id: clientId,
-          redirect_uri: redirectUri,
-          ...props
-        }));
+        setClient(
+          await createClient({
+            client_id: clientId,
+            redirect_uri: redirectUri,
+            ...props,
+          })
+        );
       } catch (err) {
         if (onLoginError) {
           onLoginError(err);
@@ -82,24 +88,39 @@ export default function Auth0Provider({
     initAuth0();
   }, []);
 
+  const loginPopup = async (opt: LoginOptions) => {
+    setPopupOpen(true);
+    try {
+      await ensureClient(client).loginWithPopup(opt);
+    } catch (error) {
+      if (onLoginError) {
+        onLoginError(error);
+      }
+    } finally {
+      setPopupOpen(false);
+    }
+  };
+
   const value = {
     client,
-    login: (opt: LoginOptions): Promise<void> => ensureClient(client).loginWithRedirect(opt),
+    login: (opt: LoginOptions): Promise<void> =>
+      ensureClient(client).loginWithRedirect(opt),
+    loginPopup,
+    popupOpen,
     logout: (opt: LogoutOptions): void => ensureClient(client).logout(opt),
-    getAccessToken: (opt: AccessTokenRequestOptions): Promise<any> => ensureClient(client).getTokenSilently(opt),
+    getAccessToken: (opt: AccessTokenRequestOptions): Promise<any> =>
+      ensureClient(client).getTokenSilently(opt),
     handlers: {
       onRedirecting,
       onRedirectCallback,
       onLoginError,
-      onAccessTokenError
-    }
+      onAccessTokenError,
+    },
   };
 
   return (
     <Auth0Context.Provider value={value}>
-      <UserProvider>
-        {children}
-      </UserProvider>
+      <UserProvider>{children}</UserProvider>
     </Auth0Context.Provider>
   );
 }
