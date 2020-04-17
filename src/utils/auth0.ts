@@ -26,6 +26,12 @@ export function getTokenFromCache(client: Auth0Client, audience: string, scope: 
     scope: getUniqueScopes(DEFAULT_SCOPE, scope),
     audience: audience || 'default'
   });
+
+  // If token does not exist in cache, just return null
+  if(!token) {
+    return undefined;
+  } 
+
   return {
     accessToken: token.access_token,
     idToken: token.id_token,
