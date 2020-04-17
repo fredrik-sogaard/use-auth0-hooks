@@ -23,6 +23,10 @@ function getTokenFromCache(client, audience, scope) {
         scope: getUniqueScopes(exports.DEFAULT_SCOPE, scope),
         audience: audience || 'default'
     });
+    // If token does not exist in cache, just return null
+    if (!token) {
+        return undefined;
+    }
     return {
         accessToken: token.access_token,
         idToken: token.id_token,
