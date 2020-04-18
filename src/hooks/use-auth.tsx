@@ -70,6 +70,7 @@ export default function useAuth(
   const { client, login, logout, handlers, loginPopup } = useContext(
     Auth0Context
   );
+  let cachedToken: ITokenResponse | undefined;
 
   // If no token is needed we can just stop here.
   if (!tokenRequest) {
@@ -84,15 +85,21 @@ export default function useAuth(
     };
   }
 
+  if (client) {
+    // Try to fetch the token initially from the cache in a synchronous way.
+    cachedToken = getTokenFromCache(
+      client,
+      tokenRequest.audience,
+      tokenRequest.scope
+    );
+  }
+
   // The following will holde the additional state for this hook.
   // We'll try to fetch the token from the cache first if available.
   const [state, setState] = useState<ITokenContext>(
     (): ITokenContext => ({
       ...initialState(),
-      token:
-        client &&
-        getTokenFromCache(client, tokenRequest.audience, tokenRequest.scope),
-      isLoading: !!tokenRequest,
+      token: cachedToken,
     })
   );
 
@@ -108,7 +115,7 @@ export default function useAuth(
     }
 
     // Try to fetch the token from the cache in a synchronous way.
-    const cachedToken = getTokenFromCache(
+    cachedToken = getTokenFromCache(
       client,
       tokenRequest.audience,
       tokenRequest.scope
@@ -129,13 +136,22 @@ export default function useAuth(
           isLoading: true,
         });
 
-        // We will fetch the token in a silent way.
+        // We will fetch the token in a silent way. getTokenSilently will cache the id_token and access_token
+        // However this function only returns the access token string, therefore we fetch from cache next
+        await ensureClient(client).getTokenSilently({
+          audience: tokenRequest.audience,
+          scope: tokenRequest.scope,
+        }),
+          // We will fetch the token in cache
+          (cachedToken = getTokenFromCache(
+            client,
+            tokenRequest.audience,
+            tokenRequest.scope
+          ));
+
         setState({
           ...initialState(),
-          token: await ensureClient(client).getTokenSilently({
-            audience: tokenRequest.audience,
-            scope: tokenRequest.scope,
-          }),
+          token: cachedToken,
         });
       } catch (e) {
         // An error occured.
