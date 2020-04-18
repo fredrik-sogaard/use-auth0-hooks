@@ -21,8 +21,9 @@ export function getUniqueScopes(...scopes: string[]): string {
 
 export function getTokenFromCache(client: Auth0Client, audience: string, scope: string): ITokenResponse | undefined {
   const cacheContainer: any = ensureClient(client);
-  const { cache } = cacheContainer;
+  const { cache, options: { client_id } } = cacheContainer;
   const token = cache.get({
+    client_id,
     scope: getUniqueScopes(DEFAULT_SCOPE, scope),
     audience: audience || 'default'
   });

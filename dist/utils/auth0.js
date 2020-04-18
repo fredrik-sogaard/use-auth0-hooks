@@ -18,8 +18,9 @@ function getUniqueScopes(...scopes) {
 exports.getUniqueScopes = getUniqueScopes;
 function getTokenFromCache(client, audience, scope) {
     const cacheContainer = ensureClient(client);
-    const { cache } = cacheContainer;
+    const { cache, options: { client_id } } = cacheContainer;
     const token = cache.get({
+        client_id,
         scope: getUniqueScopes(exports.DEFAULT_SCOPE, scope),
         audience: audience || 'default'
     });
