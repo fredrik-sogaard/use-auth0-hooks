@@ -4,8 +4,11 @@ import UserContext from "../context/user-context";
 import { ITokenContext, ITokenResponse } from "../context/access-token-context";
 import { getTokenFromCache, ensureClient } from "../utils/auth0";
 import Auth0Context, {
-  LoginOptions,
+  RedirectLoginOptions,
+  PopupLoginOptions,
+  PopupConfigOptions,
   AccessTokenRequestOptions,
+  LogoutOptions,
 } from "../context/auth0-context";
 
 export interface UseAuthResult {
@@ -42,12 +45,15 @@ export interface UseAuthResult {
   /**
    * Sign in.
    */
-  login: (options: LoginOptions) => Promise<void>;
+  login: (options: RedirectLoginOptions) => Promise<void>;
 
   /**
    * Sign in with pop up window.
    */
-  loginPopup: (options: LogoutOptions) => Promise<void>;
+  loginPopup: (
+    options: PopupLoginOptions,
+    config?: PopupConfigOptions
+  ) => Promise<void>;
 
   /**
    * Sign out.

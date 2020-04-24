@@ -3,9 +3,11 @@ import React, { useEffect, useState } from "react";
 
 import Auth0Context, {
   Auth0Client,
-  LoginOptions,
   LogoutOptions,
   AccessTokenRequestOptions,
+  PopupConfigOptions,
+  PopupLoginOptions,
+  RedirectLoginOptions,
 } from "./auth0-context";
 import UserProvider from "./user-provider";
 import { ensureClient } from "../utils/auth0";
@@ -88,10 +90,13 @@ export default function Auth0Provider({
     initAuth0();
   }, []);
 
-  const loginPopup = async (opt: LoginOptions) => {
+  const loginPopup = async (
+    options: PopupLoginOptions,
+    config?: PopupConfigOptions
+  ) => {
     setPopupOpen(true);
     try {
-      await ensureClient(client).loginWithPopup(opt);
+      await ensureClient(client).loginWithPopup(options, config);
     } catch (error) {
       if (onLoginError) {
         onLoginError(error);
@@ -103,7 +108,7 @@ export default function Auth0Provider({
 
   const value = {
     client,
-    login: (opt: LoginOptions): Promise<void> =>
+    login: (opt: RedirectLoginOptions): Promise<void> =>
       ensureClient(client).loginWithRedirect(opt),
     loginPopup,
     popupOpen,

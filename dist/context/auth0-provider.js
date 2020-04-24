@@ -23,10 +23,10 @@ function Auth0Provider(_a) {
         });
         initAuth0();
     }, []);
-    const loginPopup = (opt) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+    const loginPopup = (options, config) => tslib_1.__awaiter(this, void 0, void 0, function* () {
         setPopupOpen(true);
         try {
-            yield auth0_1.ensureClient(client).loginWithPopup(opt);
+            yield auth0_1.ensureClient(client).loginWithPopup(options, config);
         }
         catch (error) {
             if (onLoginError) {

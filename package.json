@@ -28,7 +28,7 @@
   "author": "Sandrino Di Mattia",
   "license": "MIT",
   "dependencies": {
-    "@auth0/auth0-spa-js": "^1.2.4",
+    "@auth0/auth0-spa-js": "^1.7.0",
     "query-string": "^6.8.3"
   },
   "devDependencies": {
