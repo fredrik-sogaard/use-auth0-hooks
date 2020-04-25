@@ -29,7 +29,7 @@ function initialState() {
 }
 function UserProvider({ children, }) {
     const { client, handlers, popupOpen } = react_1.useContext(auth0_context_1.default);
-    const [state, setState] = react_1.useState(initialState);
+    const [state, setState] = react_1.useState(initialState());
     react_1.useEffect(() => {
         const executeCallback = () => tslib_1.__awaiter(this, void 0, void 0, function* () {
             setState(Object.assign(Object.assign({}, initialState()), { isLoading: true }));

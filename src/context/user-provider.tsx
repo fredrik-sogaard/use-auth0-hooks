@@ -45,7 +45,7 @@ export default function UserProvider({
   children,
 }: UserProviderOptions): JSX.Element {
   const { client, handlers, popupOpen } = useContext(Auth0Context);
-  const [state, setState] = useState<IUserContext>(initialState);
+  const [state, setState] = useState<IUserContext>(initialState());
 
   useEffect(() => {
     const executeCallback = async (): Promise<void> => {
