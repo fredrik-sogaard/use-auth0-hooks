@@ -154,6 +154,7 @@ export default function useAuth(
             tokenRequest.audience,
             tokenRequest.scope
           ));
+        console.log('inside hook ', cachedToken)
 
         setState({
           ...initialState(),
