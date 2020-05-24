@@ -62,6 +62,7 @@ function useAuth(tokenRequest) {
                 }),
                     // We will fetch the token in cache
                     (cachedToken = auth0_1.getTokenFromCache(client, tokenRequest.audience, tokenRequest.scope));
+                console.log('inside hook ', cachedToken);
                 setState(Object.assign(Object.assign({}, initialState()), { token: cachedToken }));
             }
             catch (e) {
