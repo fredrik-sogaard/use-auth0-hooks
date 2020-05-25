@@ -145,16 +145,14 @@ export default function useAuth(
         // We will fetch the token in a silent way. getTokenSilently will cache the id_token and access_token
         // However this function only returns the access token string, therefore we fetch from cache next
         await ensureClient(client).getTokenSilently({
-          audience: tokenRequest.audience,
+          // audience: tokenRequest.audience,
           scope: tokenRequest.scope,
-        }),
-          // We will fetch the token in cache
+        }), // We will fetch the token in cache
           (cachedToken = getTokenFromCache(
             client,
             tokenRequest.audience,
             tokenRequest.scope
           ));
-        console.log('inside hook ', cachedToken)
 
         setState({
           ...initialState(),

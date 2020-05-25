@@ -57,12 +57,32 @@ function useAuth(tokenRequest) {
                 // We will fetch the token in a silent way. getTokenSilently will cache the id_token and access_token
                 // However this function only returns the access token string, therefore we fetch from cache next
                 yield auth0_1.ensureClient(client).getTokenSilently({
-                    audience: tokenRequest.audience,
+                    // audience: tokenRequest.audience,
                     scope: tokenRequest.scope,
-                }),
-                    // We will fetch the token in cache
+                }), // We will fetch the token in cache
                     (cachedToken = auth0_1.getTokenFromCache(client, tokenRequest.audience, tokenRequest.scope));
-                console.log('inside hook ', cachedToken);
+                // const testClient = ensureClient(client);
+                // console.log("inside hook: client ", testClient);
+                // client,
+                //   tokenRequest.audience,
+                //   tokenRequest.scope
+                // @ts-ignore
+                // const newToken = testClient.cache.get({
+                //   // @ts-ignore
+                //   client_id: testClient.options.client_id,
+                //   scope: tokenRequest.scope,
+                //   audience: tokenRequest.audience || "default",
+                // });
+                // // console.log("inside hook: cache ", client.cache.get());
+                // console.log(
+                //   // @ts-ignore
+                //   testClient.options.client_id,
+                //   tokenRequest.scope,
+                //   tokenRequest.audience
+                // );
+                // console.log("inside hook: newtoken ", newToken);
+                // console.log("inside hook: test ", testToken);
+                // console.log("inside hook: cached ", cachedToken);
                 setState(Object.assign(Object.assign({}, initialState()), { token: cachedToken }));
             }
             catch (e) {

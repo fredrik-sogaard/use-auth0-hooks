@@ -2,28 +2,32 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 function ensureClient(client) {
     if (!client) {
-        throw new Error('Auth0Client was not initialized');
+        throw new Error("Auth0Client was not initialized");
     }
     return client;
 }
 exports.ensureClient = ensureClient;
-exports.DEFAULT_SCOPE = 'openid profile email';
+exports.DEFAULT_SCOPE = "openid profile email";
 const dedupe = (arr) => arr.filter((x, i) => arr.indexOf(x) === i);
 function getUniqueScopes(...scopes) {
     const scopeString = scopes.filter(Boolean).join();
-    return dedupe(scopeString.replace(/\s/g, ',').split(','))
-        .join(' ')
+    return dedupe(scopeString.replace(/\s/g, ",").split(","))
+        .join(" ")
         .trim();
 }
 exports.getUniqueScopes = getUniqueScopes;
-function getTokenFromCache(client, audience, scope) {
+function getTokenFromCache(client, 
+//@ts-ignore
+audience, scope) {
     const cacheContainer = ensureClient(client);
-    const { cache, options: { client_id } } = cacheContainer;
+    const { cache, options: { client_id }, } = cacheContainer;
+    // console.log("inside getTokenFromCache ", cache);
     const token = cache.get({
         client_id,
         scope: getUniqueScopes(exports.DEFAULT_SCOPE, scope),
-        audience: audience || 'default'
+        audience: audience || "default",
     });
+    // console.log("inside getTokenFromCache ", token);
     // If token does not exist in cache, just return null
     if (!token) {
         return undefined;
@@ -31,7 +35,7 @@ function getTokenFromCache(client, audience, scope) {
     return {
         accessToken: token.access_token,
         idToken: token.id_token,
-        expiresIn: token.expires_in
+        expiresIn: token.expires_in,
     };
 }
 exports.getTokenFromCache = getTokenFromCache;
