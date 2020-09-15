@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const react_1 = require("react");
+var react_1 = require("react");
 exports.default = react_1.createContext({
     client: undefined,
-    login: () => {
+    login: function () {
         throw new Error("Auth0Client was not initialized");
     },
-    loginPopup: () => {
+    loginPopup: function () {
         throw new Error("Auth0Client was not initialized");
     },
-    logout: () => {
+    logout: function () {
         throw new Error("Auth0Client was not initialized");
     },
     popupOpen: false,

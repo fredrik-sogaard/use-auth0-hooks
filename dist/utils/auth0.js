@@ -8,9 +8,15 @@ function ensureClient(client) {
 }
 exports.ensureClient = ensureClient;
 exports.DEFAULT_SCOPE = "openid profile email";
-const dedupe = (arr) => arr.filter((x, i) => arr.indexOf(x) === i);
-function getUniqueScopes(...scopes) {
-    const scopeString = scopes.filter(Boolean).join();
+var dedupe = function (arr) {
+    return arr.filter(function (x, i) { return arr.indexOf(x) === i; });
+};
+function getUniqueScopes() {
+    var scopes = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        scopes[_i] = arguments[_i];
+    }
+    var scopeString = scopes.filter(Boolean).join();
     return dedupe(scopeString.replace(/\s/g, ",").split(","))
         .join(" ")
         .trim();
@@ -19,15 +25,13 @@ exports.getUniqueScopes = getUniqueScopes;
 function getTokenFromCache(client, 
 //@ts-ignore
 audience, scope) {
-    const cacheContainer = ensureClient(client);
-    const { cache, options: { client_id }, } = cacheContainer;
-    // console.log("inside getTokenFromCache ", cache);
-    const token = cache.get({
-        client_id,
+    var cacheContainer = ensureClient(client);
+    var cache = cacheContainer.cache, client_id = cacheContainer.options.client_id;
+    var token = cache.get({
+        client_id: client_id,
         scope: getUniqueScopes(exports.DEFAULT_SCOPE, scope),
         audience: audience || "default",
     });
-    // console.log("inside getTokenFromCache ", token);
     // If token does not exist in cache, just return null
     if (!token) {
         return undefined;

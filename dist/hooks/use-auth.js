@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const react_1 = require("react");
-const user_context_1 = tslib_1.__importDefault(require("../context/user-context"));
-const auth0_1 = require("../utils/auth0");
-const auth0_context_1 = tslib_1.__importDefault(require("../context/auth0-context"));
+var tslib_1 = require("tslib");
+var react_1 = require("react");
+var user_context_1 = tslib_1.__importDefault(require("../context/user-context"));
+var auth0_1 = require("../utils/auth0");
+var auth0_context_1 = tslib_1.__importDefault(require("../context/auth0-context"));
 function initialState() {
     return {
         token: null,
@@ -13,19 +13,20 @@ function initialState() {
     };
 }
 function useAuth(tokenRequest) {
-    const { isAuthenticated, isLoading, error, user } = react_1.useContext(user_context_1.default);
-    const { client, login, logout, handlers, loginPopup } = react_1.useContext(auth0_context_1.default);
-    let cachedToken;
+    var _this = this;
+    var _a = react_1.useContext(user_context_1.default), isAuthenticated = _a.isAuthenticated, isLoading = _a.isLoading, error = _a.error, user = _a.user;
+    var _b = react_1.useContext(auth0_context_1.default), client = _b.client, login = _b.login, logout = _b.logout, handlers = _b.handlers, loginPopup = _b.loginPopup;
+    var cachedToken;
     // If no token is needed we can just stop here.
     if (!tokenRequest) {
         return {
-            user,
-            error,
-            isAuthenticated,
-            isLoading,
-            login,
-            logout,
-            loginPopup,
+            user: user,
+            error: error,
+            isAuthenticated: isAuthenticated,
+            isLoading: isLoading,
+            login: login,
+            logout: logout,
+            loginPopup: loginPopup,
         };
     }
     if (client) {
@@ -34,8 +35,8 @@ function useAuth(tokenRequest) {
     }
     // The following will holde the additional state for this hook.
     // We'll try to fetch the token from the cache first if available.
-    const [state, setState] = react_1.useState(() => (Object.assign(Object.assign({}, initialState()), { token: cachedToken })));
-    react_1.useEffect(() => {
+    var _c = react_1.useState(function () { return (tslib_1.__assign(tslib_1.__assign({}, initialState()), { token: cachedToken })); }), state = _c[0], setState = _c[1];
+    react_1.useEffect(function () {
         // We are not ready to fetch a token yet.
         if (!client || isLoading || !isAuthenticated) {
             return;
@@ -47,64 +48,54 @@ function useAuth(tokenRequest) {
         // Try to fetch the token from the cache in a synchronous way.
         cachedToken = auth0_1.getTokenFromCache(client, tokenRequest.audience, tokenRequest.scope);
         if (cachedToken) {
-            setState(Object.assign(Object.assign({}, initialState()), { token: cachedToken }));
+            setState(tslib_1.__assign(tslib_1.__assign({}, initialState()), { token: cachedToken }));
             return;
         }
         // We were not able to get the token from cache, so now we'll just start a transaction
-        const getToken = () => tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                setState(Object.assign(Object.assign({}, initialState()), { isLoading: true }));
-                // We will fetch the token in a silent way. getTokenSilently will cache the id_token and access_token
-                // However this function only returns the access token string, therefore we fetch from cache next
-                yield auth0_1.ensureClient(client).getTokenSilently({
-                    // audience: tokenRequest.audience,
-                    scope: tokenRequest.scope,
-                }), // We will fetch the token in cache
-                    (cachedToken = auth0_1.getTokenFromCache(client, tokenRequest.audience, tokenRequest.scope));
-                // const testClient = ensureClient(client);
-                // console.log("inside hook: client ", testClient);
-                // client,
-                //   tokenRequest.audience,
-                //   tokenRequest.scope
-                // @ts-ignore
-                // const newToken = testClient.cache.get({
-                //   // @ts-ignore
-                //   client_id: testClient.options.client_id,
-                //   scope: tokenRequest.scope,
-                //   audience: tokenRequest.audience || "default",
-                // });
-                // // console.log("inside hook: cache ", client.cache.get());
-                // console.log(
-                //   // @ts-ignore
-                //   testClient.options.client_id,
-                //   tokenRequest.scope,
-                //   tokenRequest.audience
-                // );
-                // console.log("inside hook: newtoken ", newToken);
-                // console.log("inside hook: test ", testToken);
-                // console.log("inside hook: cached ", cachedToken);
-                setState(Object.assign(Object.assign({}, initialState()), { token: cachedToken }));
-            }
-            catch (e) {
-                // An error occured.
-                if (handlers.onAccessTokenError) {
-                    handlers.onAccessTokenError(e, tokenRequest);
+        var getToken = function () { return tslib_1.__awaiter(_this, void 0, void 0, function () {
+            var e_1;
+            return tslib_1.__generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        setState(tslib_1.__assign(tslib_1.__assign({}, initialState()), { isLoading: true }));
+                        // We will fetch the token in a silent way. getTokenSilently will cache the id_token and access_token
+                        // However this function only returns the access token string, therefore we fetch from cache next
+                        return [4 /*yield*/, auth0_1.ensureClient(client).getTokenSilently({
+                                // audience: tokenRequest.audience,
+                                scope: tokenRequest.scope,
+                            })];
+                    case 1:
+                        // We will fetch the token in a silent way. getTokenSilently will cache the id_token and access_token
+                        // However this function only returns the access token string, therefore we fetch from cache next
+                        _a.sent(), // We will fetch the token in cache
+                            (cachedToken = auth0_1.getTokenFromCache(client, tokenRequest.audience, tokenRequest.scope));
+                        setState(tslib_1.__assign(tslib_1.__assign({}, initialState()), { token: cachedToken }));
+                        return [3 /*break*/, 3];
+                    case 2:
+                        e_1 = _a.sent();
+                        // An error occured.
+                        if (handlers.onAccessTokenError) {
+                            handlers.onAccessTokenError(e_1, tokenRequest);
+                        }
+                        setState(tslib_1.__assign(tslib_1.__assign({}, initialState()), { error: e_1 }));
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
-                setState(Object.assign(Object.assign({}, initialState()), { error: e }));
-            }
-        });
+            });
+        }); };
         getToken();
     }, [isAuthenticated, isLoading]);
     return {
-        user,
+        user: user,
         error: error || state.error,
-        isAuthenticated,
+        isAuthenticated: isAuthenticated,
         isLoading: isLoading || state.isLoading,
         token: state.token,
         accessToken: state.token && state.token.accessToken,
-        login,
-        loginPopup,
-        logout,
+        login: login,
+        loginPopup: loginPopup,
+        logout: logout,
     };
 }
 exports.default = useAuth;

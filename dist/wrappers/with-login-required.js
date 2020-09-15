@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const query_string_1 = require("query-string");
-const react_1 = tslib_1.__importStar(require("react"));
-const use_auth_1 = tslib_1.__importDefault(require("../hooks/use-auth"));
-const auth0_context_1 = tslib_1.__importDefault(require("../context/auth0-context"));
-const with_wrapper_1 = tslib_1.__importDefault(require("../utils/with-wrapper"));
+var tslib_1 = require("tslib");
+var query_string_1 = require("query-string");
+var react_1 = tslib_1.__importStar(require("react"));
+var use_auth_1 = tslib_1.__importDefault(require("../hooks/use-auth"));
+var auth0_context_1 = tslib_1.__importDefault(require("../context/auth0-context"));
+var with_wrapper_1 = tslib_1.__importDefault(require("../utils/with-wrapper"));
 function getReturnTo() {
     if (window && window.location) {
         return {
@@ -18,11 +18,11 @@ function getReturnTo() {
     return {};
 }
 function withLoginRequired(ChildComponent) {
-    return with_wrapper_1.default(ChildComponent, 'withLoginRequired', (_a) => {
-        var { path } = _a, rest = tslib_1.__rest(_a, ["path"]);
-        const { isLoading, isAuthenticated, login } = use_auth_1.default();
-        const context = react_1.useContext(auth0_context_1.default);
-        react_1.useEffect(() => {
+    return with_wrapper_1.default(ChildComponent, 'withLoginRequired', function (_a) {
+        var path = _a.path, rest = tslib_1.__rest(_a, ["path"]);
+        var _b = use_auth_1.default(), isLoading = _b.isLoading, isAuthenticated = _b.isAuthenticated, login = _b.login;
+        var context = react_1.useContext(auth0_context_1.default);
+        react_1.useEffect(function () {
             if (!context.client || isLoading || isAuthenticated) {
                 return;
             }
@@ -30,7 +30,7 @@ function withLoginRequired(ChildComponent) {
         }, [context.client, isLoading, isAuthenticated, login, path]);
         if (isAuthenticated) {
             // cast to T needed https://github.com/Microsoft/TypeScript/issues/28938
-            return react_1.default.createElement(ChildComponent, Object.assign({}, rest));
+            return react_1.default.createElement(ChildComponent, tslib_1.__assign({}, rest));
         }
         return ((context.handlers.onRedirecting && context.handlers.onRedirecting())
             || null);
